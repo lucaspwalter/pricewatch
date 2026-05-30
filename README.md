@@ -35,7 +35,8 @@ Frontend:
 Integração:
 - Fake Store API para buscar produtos e preços
 
-Como usar
+Como usar:
+
 A explicação de como usar o PriceWatch está no meu portfolio: https://lucaspwalter.github.io/portfolio/
 
 Estrutura do projeto
