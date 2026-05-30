@@ -38,10 +38,11 @@ Integração:
 Como rodar localmente
 Os comandos abaixo foram escritos para Linux/Ubuntu.
 
-1. Entre na pasta do projeto:
+1. Baixe o projeto do GitHub:
 
 ```bash
-cd /home/lucas/Documents/projetos/pricewatch
+git clone https://github.com/lucaspwalter/pricewatch.git
+cd pricewatch
 ```
 
 2. Instale os programas necessários:
@@ -76,7 +77,13 @@ sudo -u postgres psql -c "CREATE DATABASE pricewatch OWNER pricewatch;"
 sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE pricewatch TO pricewatch;"
 ```
 
-Se aparecer uma mensagem dizendo que o usuário ou banco já existe, pode continuar.
+Esses comandos criam:
+
+- Um usuário do banco chamado `pricewatch`
+- Uma senha chamada `pricewatch`
+- Um banco chamado `pricewatch`
+
+Se aparecer uma mensagem dizendo que o usuário ou banco já existe, pode continuar se você já criou eles antes.
 
 6. Configure as variáveis do backend:
 
@@ -87,6 +94,32 @@ export DATABASE_PASSWORD=pricewatch
 export JWT_SECRET=pricewatch-secret-key-local-1234567890
 export JWT_EXPIRATION_MS=86400000
 ```
+
+Essas variáveis estão certas se você usou exatamente os comandos do passo 5.
+
+Se você criou o banco com outro nome, usuário ou senha, troque estes valores:
+
+```bash
+export DATABASE_URL=jdbc:postgresql://localhost:5432/NOME_DO_SEU_BANCO
+export DATABASE_USERNAME=SEU_USUARIO_DO_POSTGRES
+export DATABASE_PASSWORD=SUA_SENHA_DO_POSTGRES
+export JWT_SECRET=uma-chave-local-com-pelo-menos-32-caracteres
+export JWT_EXPIRATION_MS=86400000
+```
+
+Para ver os bancos que existem no seu PostgreSQL:
+
+```bash
+sudo -u postgres psql -c "\l"
+```
+
+Para ver os usuários que existem no seu PostgreSQL:
+
+```bash
+sudo -u postgres psql -c "\du"
+```
+
+O `JWT_SECRET` não vem do banco. Ele é uma chave usada pelo sistema para gerar o login. Para rodar localmente, pode usar a chave de exemplo acima.
 
 7. Rode o backend:
 
@@ -105,7 +138,7 @@ Deixe esse terminal aberto.
 8. Abra outro terminal e entre novamente na pasta do projeto:
 
 ```bash
-cd /home/lucas/Documents/projetos/pricewatch
+cd pricewatch
 ```
 
 9. Instale as dependências do frontend:
@@ -190,21 +223,21 @@ Ctrl + C
 Rodar somente os testes do backend:
 
 ```bash
-cd /home/lucas/Documents/projetos/pricewatch
+cd pricewatch
 mvn test
 ```
 
 Gerar o arquivo final do backend:
 
 ```bash
-cd /home/lucas/Documents/projetos/pricewatch
+cd pricewatch
 mvn clean package
 ```
 
 Rodar o backend com Docker:
 
 ```bash
-cd /home/lucas/Documents/projetos/pricewatch
+cd pricewatch
 docker build -t pricewatch .
 docker run --rm -p 8080:8080 \
   -e DATABASE_URL=jdbc:postgresql://host.docker.internal:5432/pricewatch \
