@@ -1,13 +1,15 @@
-PriceWatch
+# PriceWatch
 
-O que é
+## O que é
+
 PriceWatch é um sistema para acompanhar o preço de produtos automaticamente.
 
 Ele funciona como um "avise-me quando baixar". A pessoa cadastra um produto, escolhe o preço que quer pagar e o sistema fica verificando se aquele produto chegou no valor desejado.
 
 Quando o preço atual fica menor ou igual ao preço escolhido, o sistema desativa o alerta e mostra a mudança no painel.
 
-Como funciona
+## Como funciona
+
 O projeto tem duas partes:
 
 - Backend: é a API, a parte que salva os usuários, produtos, alertas, histórico de preços e notificações.
@@ -15,8 +17,10 @@ O projeto tem duas partes:
 
 O backend verifica os preços a cada 30 minutos. Ele busca o preço atual do produto, grava esse valor no histórico e compara com o preço-alvo cadastrado pelo usuário.
 
-Tecnologias
+## Tecnologias
+
 Backend:
+
 - Java 17
 - Spring Boot
 - Spring Security
@@ -27,19 +31,24 @@ Backend:
 - Maven
 
 Frontend:
+
 - Next.js
 - React
 - TypeScript
 - Tailwind CSS
 
 Integração:
+
 - Fake Store API para buscar produtos e preços
 
-Como usar:
+## Como usar
 
-A explicação de como usar o PriceWatch está no meu portfolio: https://lucaspwalter.github.io/portfolio/
+A explicação de como usar o PriceWatch está no meu portfólio:
 
-Estrutura do projeto
+https://lucaspwalter.github.io/portfolio/
+
+## Estrutura do projeto
+
 ```text
 pricewatch/
 ├── src/
