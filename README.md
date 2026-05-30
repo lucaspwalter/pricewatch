@@ -167,11 +167,7 @@ http://localhost:3000
 ```
 
 Como usar
-Veja a explicação de uso no portfolio:
-
-```text
-https://lucaspwalter.github.io/portfolio/
-```
+A explicação de como usar o PriceWatch está no meu portfolio: https://lucaspwalter.github.io/portfolio/
 
 Comandos úteis
 Parar o backend ou frontend:
