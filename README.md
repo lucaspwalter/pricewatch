@@ -35,7 +35,7 @@ Frontend:
 Integração:
 - Fake Store API para buscar produtos e preços
 
-Como rodar localmente
+Como rodar localmente no Linux/Ubuntu
 Os comandos abaixo foram escritos para Linux/Ubuntu.
 
 1. Baixe o projeto do GitHub:
@@ -161,6 +161,130 @@ http://localhost:3000
 ```
 
 11. Abra o navegador e acesse:
+
+```text
+http://localhost:3000
+```
+
+Como rodar localmente no Windows
+Os comandos abaixo foram escritos para o PowerShell.
+
+1. Instale os programas necessários:
+
+```powershell
+winget install --id Git.Git -e
+winget install --id EclipseAdoptium.Temurin.17.JDK -e
+winget install --id Apache.Maven -e
+winget install --id OpenJS.NodeJS.LTS -e
+winget install --id PostgreSQL.PostgreSQL -e
+```
+
+Depois de instalar, feche e abra o PowerShell novamente.
+
+2. Confira se tudo foi instalado:
+
+```powershell
+git --version
+java -version
+mvn -version
+node -v
+npm -v
+psql --version
+```
+
+3. Baixe o projeto do GitHub:
+
+```powershell
+git clone https://github.com/lucaspwalter/pricewatch.git
+cd pricewatch
+```
+
+4. Crie o usuário e o banco de dados do projeto:
+
+```powershell
+psql -U postgres -c "CREATE USER pricewatch WITH PASSWORD 'pricewatch';"
+psql -U postgres -c "CREATE DATABASE pricewatch OWNER pricewatch;"
+psql -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE pricewatch TO pricewatch;"
+```
+
+O PostgreSQL pode pedir a senha do usuário `postgres`. Essa senha foi definida durante a instalação do PostgreSQL.
+
+Se o comando `psql` não for encontrado, abra o aplicativo "SQL Shell (psql)" pelo menu iniciar e rode os mesmos comandos sem a parte `psql -U postgres -c`, assim:
+
+```sql
+CREATE USER pricewatch WITH PASSWORD 'pricewatch';
+CREATE DATABASE pricewatch OWNER pricewatch;
+GRANT ALL PRIVILEGES ON DATABASE pricewatch TO pricewatch;
+```
+
+5. Configure as variáveis do backend no mesmo PowerShell em que vai rodar o backend:
+
+```powershell
+$env:DATABASE_URL="jdbc:postgresql://localhost:5432/pricewatch"
+$env:DATABASE_USERNAME="pricewatch"
+$env:DATABASE_PASSWORD="pricewatch"
+$env:JWT_SECRET="pricewatch-secret-key-local-1234567890"
+$env:JWT_EXPIRATION_MS="86400000"
+```
+
+Essas variáveis estão certas se você criou o banco com usuário `pricewatch`, senha `pricewatch` e banco `pricewatch`.
+
+Se você usou outro nome de banco, usuário ou senha, troque estes valores:
+
+```powershell
+$env:DATABASE_URL="jdbc:postgresql://localhost:5432/NOME_DO_SEU_BANCO"
+$env:DATABASE_USERNAME="SEU_USUARIO_DO_POSTGRES"
+$env:DATABASE_PASSWORD="SUA_SENHA_DO_POSTGRES"
+$env:JWT_SECRET="uma-chave-local-com-pelo-menos-32-caracteres"
+$env:JWT_EXPIRATION_MS="86400000"
+```
+
+Para ver os bancos que existem no seu PostgreSQL:
+
+```powershell
+psql -U postgres -c "\l"
+```
+
+Para ver os usuários que existem no seu PostgreSQL:
+
+```powershell
+psql -U postgres -c "\du"
+```
+
+6. Rode o backend:
+
+```powershell
+mvn spring-boot:run
+```
+
+Quando estiver funcionando, a API ficará disponível em:
+
+```text
+http://localhost:8080
+```
+
+Deixe esse PowerShell aberto.
+
+7. Abra outro PowerShell e entre na pasta do projeto:
+
+```powershell
+cd pricewatch
+```
+
+8. Instale as dependências do frontend:
+
+```powershell
+cd frontend
+npm install
+```
+
+9. Rode o frontend:
+
+```powershell
+npm run dev
+```
+
+Quando estiver funcionando, o site ficará disponível em:
 
 ```text
 http://localhost:3000
