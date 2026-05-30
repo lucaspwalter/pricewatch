@@ -5,7 +5,7 @@ PriceWatch é um sistema para acompanhar o preço de produtos automaticamente.
 
 Ele funciona como um "avise-me quando baixar". A pessoa cadastra um produto, escolhe o preço que quer pagar e o sistema fica verificando se aquele produto chegou no valor desejado.
 
-Quando o preço atual fica menor ou igual ao preço escolhido, o sistema desativa o alerta e pode enviar uma notificação pelo WhatsApp.
+Quando o preço atual fica menor ou igual ao preço escolhido, o sistema desativa o alerta e mostra a mudança no painel.
 
 Como funciona
 O projeto tem duas partes:
@@ -32,9 +32,8 @@ Frontend:
 - TypeScript
 - Tailwind CSS
 
-Integrações:
+Integração:
 - Fake Store API para buscar produtos e preços
-- Evolution API para enviar mensagens pelo WhatsApp
 
 Como rodar localmente
 Os comandos abaixo foram escritos para Linux/Ubuntu.
@@ -140,17 +139,6 @@ Como usar
 3. Cadastre um produto.
 4. Defina o preço que você quer pagar.
 5. Acompanhe o alerta pelo painel.
-
-Configuração opcional do WhatsApp
-O envio pelo WhatsApp usa a Evolution API. Se você não configurar isso, o projeto continua rodando, mas o envio da mensagem será ignorado.
-
-Para ativar, configure também:
-
-```bash
-export EVOLUTION_API_URL=http://localhost:8081
-export EVOLUTION_INSTANCE=sua-instancia
-export EVOLUTION_API_KEY=sua-chave-da-evolution-api
-```
 
 Comandos úteis
 Parar o backend ou frontend:
