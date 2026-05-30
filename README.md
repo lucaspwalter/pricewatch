@@ -1,14 +1,19 @@
 PriceWatch
 
 O que é
-PriceWatch é uma aplicação para acompanhar preços de produtos e avisar o usuário quando um item chega ao valor desejado.
+PriceWatch é um sistema para acompanhar o preço de produtos automaticamente.
 
-A ideia é simples: o usuário cadastra um produto, define um preço-alvo e deixa o sistema monitorar a variação automaticamente. Quando o preço atual fica menor ou igual ao valor definido, o alerta é disparado e a notificação pode ser enviada por WhatsApp.
+Ele funciona como um "avise-me quando baixar". A pessoa cadastra um produto, escolhe o preço que quer pagar e o sistema fica verificando se aquele produto chegou no valor desejado.
+
+Quando o preço atual fica menor ou igual ao preço escolhido, o sistema desativa o alerta e pode enviar uma notificação pelo WhatsApp.
 
 Como funciona
-O backend consulta periodicamente os produtos cadastrados, registra o histórico de preços e verifica se algum alerta ativo atingiu o preço-alvo.
+O projeto tem duas partes:
 
-O usuário acessa o frontend, cria uma conta, cadastra produtos, define alertas e acompanha o status pelo dashboard. A API protege as rotas com autenticação JWT, persiste os dados em PostgreSQL e usa migrations Flyway para manter a estrutura do banco versionada.
+- Backend: é a API, a parte que salva os usuários, produtos, alertas, histórico de preços e notificações.
+- Frontend: é a tela que a pessoa usa no navegador para criar conta, entrar no sistema e cadastrar alertas.
+
+O backend verifica os preços a cada 30 minutos. Ele busca o preço atual do produto, grava esse valor no histórico e compara com o preço-alvo cadastrado pelo usuário.
 
 Tecnologias
 Backend:
@@ -28,55 +33,157 @@ Frontend:
 - Tailwind CSS
 
 Integrações:
-- Fake Store API para consulta de produtos e preços
-- Evolution API para envio de notificações por WhatsApp
+- Fake Store API para buscar produtos e preços
+- Evolution API para enviar mensagens pelo WhatsApp
 
 Como rodar localmente
-Pré-requisitos:
-- Java 17
-- Maven
-- Node.js
-- PostgreSQL
+Os comandos abaixo foram escritos para Linux/Ubuntu.
 
-Crie um banco PostgreSQL para o projeto:
+1. Entre na pasta do projeto:
 
-```sql
-CREATE DATABASE pricewatch;
+```bash
+cd /home/lucas/Documents/projetos/pricewatch
 ```
 
-Configure as variáveis de ambiente do backend, se necessário:
+2. Instale os programas necessários:
+
+```bash
+sudo apt update
+sudo apt install -y openjdk-17-jdk maven nodejs npm postgresql postgresql-contrib
+```
+
+3. Confira se tudo foi instalado:
+
+```bash
+java -version
+mvn -version
+node -v
+npm -v
+psql --version
+```
+
+4. Inicie o PostgreSQL:
+
+```bash
+sudo systemctl start postgresql
+sudo systemctl enable postgresql
+```
+
+5. Crie o usuário e o banco de dados do projeto:
+
+```bash
+sudo -u postgres psql -c "CREATE USER pricewatch WITH PASSWORD 'pricewatch';"
+sudo -u postgres psql -c "CREATE DATABASE pricewatch OWNER pricewatch;"
+sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE pricewatch TO pricewatch;"
+```
+
+Se aparecer uma mensagem dizendo que o usuário ou banco já existe, pode continuar.
+
+6. Configure as variáveis do backend:
 
 ```bash
 export DATABASE_URL=jdbc:postgresql://localhost:5432/pricewatch
 export DATABASE_USERNAME=pricewatch
 export DATABASE_PASSWORD=pricewatch
-export JWT_SECRET=sua-chave-secreta
+export JWT_SECRET=pricewatch-secret-key-local-1234567890
+export JWT_EXPIRATION_MS=86400000
 ```
 
-Rode o backend:
+7. Rode o backend:
 
 ```bash
 mvn spring-boot:run
 ```
 
-A API ficará disponível em:
+Quando estiver funcionando, a API ficará disponível em:
 
 ```text
 http://localhost:8080
 ```
 
-Em outro terminal, rode o frontend:
+Deixe esse terminal aberto.
+
+8. Abra outro terminal e entre novamente na pasta do projeto:
+
+```bash
+cd /home/lucas/Documents/projetos/pricewatch
+```
+
+9. Instale as dependências do frontend:
 
 ```bash
 cd frontend
 npm install
+```
+
+10. Rode o frontend:
+
+```bash
 npm run dev
 ```
 
-O frontend ficará disponível em:
+Quando estiver funcionando, o site ficará disponível em:
 
 ```text
 http://localhost:3000
+```
+
+11. Abra o navegador e acesse:
+
+```text
+http://localhost:3000
+```
+
+Como usar
+1. Crie uma conta na tela de cadastro.
+2. Entre com seu e-mail e senha.
+3. Cadastre um produto.
+4. Defina o preço que você quer pagar.
+5. Acompanhe o alerta pelo painel.
+
+Configuração opcional do WhatsApp
+O envio pelo WhatsApp usa a Evolution API. Se você não configurar isso, o projeto continua rodando, mas o envio da mensagem será ignorado.
+
+Para ativar, configure também:
+
+```bash
+export EVOLUTION_API_URL=http://localhost:8081
+export EVOLUTION_INSTANCE=sua-instancia
+export EVOLUTION_API_KEY=sua-chave-da-evolution-api
+```
+
+Comandos úteis
+Parar o backend ou frontend:
+
+```bash
+Ctrl + C
+```
+
+Rodar somente os testes do backend:
+
+```bash
+cd /home/lucas/Documents/projetos/pricewatch
+mvn test
+```
+
+Gerar o arquivo final do backend:
+
+```bash
+cd /home/lucas/Documents/projetos/pricewatch
+mvn clean package
+```
+
+Rodar o backend com Docker:
+
+```bash
+cd /home/lucas/Documents/projetos/pricewatch
+docker build -t pricewatch .
+docker run --rm -p 8080:8080 \
+  -e DATABASE_URL=jdbc:postgresql://host.docker.internal:5432/pricewatch \
+  -e DATABASE_USERNAME=pricewatch \
+  -e DATABASE_PASSWORD=pricewatch \
+  -e JWT_SECRET=pricewatch-secret-key-local-1234567890 \
+  pricewatch
 ```
 
 Estrutura do projeto
@@ -85,22 +192,22 @@ pricewatch/
 ├── src/
 │   └── main/
 │       ├── java/com/pricewatch/
-│       │   ├── client/        # Integrações externas
-│       │   ├── config/        # Configurações da aplicação
-│       │   ├── controller/    # Endpoints da API
-│       │   ├── dto/           # Objetos de entrada e saída
-│       │   ├── model/         # Entidades do domínio
-│       │   ├── repository/    # Acesso ao banco de dados
-│       │   ├── scheduler/     # Monitoramento periódico de preços
-│       │   ├── security/      # Autenticação e autorização
+│       │   ├── client/        # Conexões com serviços externos
+│       │   ├── config/        # Configurações do sistema
+│       │   ├── controller/    # Rotas da API
+│       │   ├── dto/           # Dados que entram e saem da API
+│       │   ├── model/         # Tabelas e regras principais
+│       │   ├── repository/    # Comunicação com o banco
+│       │   ├── scheduler/     # Verificação automática de preços
+│       │   ├── security/      # Login, senha e token JWT
 │       │   └── service/       # Regras de negócio
 │       └── resources/
 │           ├── application.properties
-│           └── db/migration/  # Migrations Flyway
+│           └── db/migration/  # Criação e alteração das tabelas
 ├── frontend/
-│   ├── app/                   # Telas da aplicação
-│   ├── components/            # Componentes reutilizáveis
-│   └── lib/                   # Cliente da API e utilitários
+│   ├── app/                   # Páginas do site
+│   ├── components/            # Partes reutilizáveis da tela
+│   └── lib/                   # Comunicação com a API
 ├── Dockerfile
 └── pom.xml
 ```
