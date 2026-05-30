@@ -45,7 +45,7 @@ Integração:
 
 A explicação de como usar o PriceWatch está no meu portfólio:
 
-[https://lucaspwalter.github.io/portfolio/]https://lucaspwalter.github.io/portfolio/setup-pricewatch.html
+https://lucaspwalter.github.io/portfolio/setup-pricewatch.html
 
 ## Estrutura do projeto
 
