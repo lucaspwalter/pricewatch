@@ -51,6 +51,7 @@ public class NotificationService {
 
     private void sendWhatsApp(Alert alert, String message) {
         try {
+            log.info("NOTIFICACAO DE PRECO: {}", message);
             String status = whatsAppClient.sendText(alert.getUser().getPhone(), message);
             save(alert, NotificationChannel.WHATSAPP, status);
         } catch (Exception exception) {

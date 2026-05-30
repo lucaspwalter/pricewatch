@@ -11,6 +11,18 @@ export default function NotificationsPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
+  function formatStatus(status: string) {
+    if (status === "SENT" || status === "SKIPPED_EVOLUTION_NOT_CONFIGURED") {
+      return "Registrado";
+    }
+
+    if (status === "ERROR") {
+      return "Erro";
+    }
+
+    return status;
+  }
+
   useEffect(() => {
     async function loadNotifications() {
       try {
@@ -29,7 +41,7 @@ export default function NotificationsPage() {
     <AppShell>
       <div className="mb-6">
         <h1 className="text-2xl font-semibold text-slate-950">Notificacoes</h1>
-        <p className="mt-1 text-sm text-slate-500">Historico de envios por e-mail e WhatsApp.</p>
+        <p className="mt-1 text-sm text-slate-500">Historico de alertas de preco disparados.</p>
       </div>
 
       {error && <StatusMessage type="error" message={error} />}
@@ -49,8 +61,8 @@ export default function NotificationsPage() {
           notifications.map((notification) => (
             <div key={notification.id} className="grid grid-cols-12 items-center border-b border-slate-100 px-4 py-4 text-sm last:border-0">
               <span className="col-span-4 font-medium text-slate-900">{notification.productTitle}</span>
-              <span className="col-span-2 text-slate-700">{notification.channel}</span>
-              <span className="col-span-3 text-slate-700">{notification.status}</span>
+              <span className="col-span-2 text-slate-700">Sistema</span>
+              <span className="col-span-3 text-slate-700">{formatStatus(notification.status)}</span>
               <span className="col-span-3 text-slate-500">{new Date(notification.sentAt).toLocaleString("pt-BR")}</span>
             </div>
           ))

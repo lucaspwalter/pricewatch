@@ -39,7 +39,7 @@ export default function NewProductPage() {
     <AppShell>
       <div className="max-w-xl">
         <h1 className="text-2xl font-semibold text-slate-950">Novo produto</h1>
-        <p className="mt-1 text-sm text-slate-500">Use um ID inteiro da Fake Store API.</p>
+        <p className="mt-1 text-sm text-slate-500">Use um numero de 1 a 20 da Fake Store.</p>
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-4 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
           {error && <StatusMessage type="error" message={error} />}

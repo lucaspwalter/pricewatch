@@ -136,9 +136,49 @@ http://localhost:3000
 Como usar
 1. Crie uma conta na tela de cadastro.
 2. Entre com seu e-mail e senha.
-3. Cadastre um produto.
-4. Defina o preço que você quer pagar.
-5. Acompanhe o alerta pelo painel.
+3. Clique em "Novo produto".
+4. Cadastre um produto usando um número de 1 a 20.
+5. Depois de cadastrar o produto, o sistema vai abrir a tela de novo alerta.
+6. Digite o preço que você quer pagar.
+7. Clique em "Criar alerta".
+8. Acompanhe o alerta pelo painel.
+
+Como testar a notificação sem esperar
+O PriceWatch verifica os preços sozinho a cada 30 minutos.
+
+Para testar mais rápido no seu computador, você pode mandar o sistema fazer essa verificação na hora.
+
+O projeto usa produtos de teste da Fake Store. Na hora de cadastrar o produto, escolha qualquer número de 1 a 20.
+
+Para testar rápido, use um preço-alvo bem alto, por exemplo:
+
+```text
+99999
+```
+
+Assim o sistema entende que o produto já está abaixo do preço desejado e dispara o alerta quando a verificação rodar.
+
+Depois de criar o alerta, abra outro terminal e rode:
+
+```bash
+curl -X POST http://localhost:8080/admin/run-scheduler
+```
+
+Esse comando pula a espera de 30 minutos e executa a verificação de preços imediatamente.
+
+Se deu certo, o terminal onde o backend está rodando vai mostrar uma mensagem parecida com esta:
+
+```text
+NOTIFICACAO DE PRECO: O produto nome-do-produto atingiu R$ 10.99. Valor alvo: R$ 99999.
+```
+
+Depois disso, volte para o site e entre em:
+
+```text
+http://localhost:3000/notifications
+```
+
+Se tudo funcionou, a notificação do produto vai aparecer nessa tela.
 
 Comandos úteis
 Parar o backend ou frontend:
