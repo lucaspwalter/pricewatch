@@ -26,6 +26,18 @@ Backend:
 - Spring Security
 - Spring Data JPA
 - PostgreSQL
+
+## Como rodar localmente
+
+Com Docker instalado:
+
+```bash
+git clone https://github.com/lucaspwalter/pricewatch.git
+cd pricewatch
+docker compose up --build
+```
+
+Acesse `http://localhost:3000`. API: `http://localhost:8080`.
 - Flyway
 - JWT
 - Maven
