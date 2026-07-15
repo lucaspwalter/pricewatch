@@ -1,23 +1,23 @@
 # PriceWatch
 
-## O que é
+## What it is
 
-PriceWatch é um sistema para acompanhar o preço de produtos automaticamente.
+PriceWatch is a system that automatically tracks product prices.
 
-Ele funciona como um "avise-me quando baixar". A pessoa cadastra um produto, escolhe o preço que quer pagar e o sistema fica verificando se aquele produto chegou no valor desejado.
+It works like a "notify me when the price drops" service. Users add a product, choose their target price, and the system checks whether the product has reached that price.
 
-Quando o preço atual fica menor ou igual ao preço escolhido, o sistema desativa o alerta e mostra a mudança no painel.
+When the current price is less than or equal to the target price, the system disables the alert and displays the change on the dashboard.
 
-## Como funciona
+## How it works
 
-O projeto tem duas partes:
+The project has two parts:
 
-- Backend: é a API, a parte que salva os usuários, produtos, alertas, histórico de preços e notificações.
-- Frontend: é a tela que a pessoa usa no navegador para criar conta, entrar no sistema e cadastrar alertas.
+- Backend: the API that stores users, products, alerts, price history, and notifications.
+- Frontend: the browser interface used to create an account, sign in, and manage alerts.
 
-O backend verifica os preços a cada 30 minutos. Ele busca o preço atual do produto, grava esse valor no histórico e compara com o preço-alvo cadastrado pelo usuário.
+The backend checks prices every 30 minutes. It retrieves each product's current price, saves it to the history, and compares it with the user's target price.
 
-## Tecnologias
+## Technologies
 
 Backend:
 
@@ -27,9 +27,9 @@ Backend:
 - Spring Data JPA
 - PostgreSQL
 
-## Como rodar localmente
+## Running locally
 
-Com Docker instalado:
+With Docker installed:
 
 ```bash
 git clone https://github.com/lucaspwalter/pricewatch.git
@@ -37,7 +37,7 @@ cd pricewatch
 docker compose up --build
 ```
 
-Acesse `http://localhost:3000`. API: `http://localhost:8080`.
+Open `http://localhost:3000`. API: `http://localhost:8080`.
 - Flyway
 - JWT
 - Maven
@@ -49,39 +49,39 @@ Frontend:
 - TypeScript
 - Tailwind CSS
 
-Integração:
+Integration:
 
-- Fake Store API para buscar produtos e preços
+- Fake Store API for product and price data
 
-## Como usar
+## How to use
 
-A explicação de como usar o PriceWatch está no meu portfólio:
+Instructions for using PriceWatch are available in my portfolio:
 
 https://lucaspwalter.github.io/portfolio/setup-pricewatch.html
 
-## Estrutura do projeto
+## Project structure
 
 ```text
 pricewatch/
 ├── src/
 │   └── main/
 │       ├── java/com/pricewatch/
-│       │   ├── client/        # Conexões com serviços externos
-│       │   ├── config/        # Configurações do sistema
-│       │   ├── controller/    # Rotas da API
-│       │   ├── dto/           # Dados que entram e saem da API
-│       │   ├── model/         # Tabelas e regras principais
-│       │   ├── repository/    # Comunicação com o banco
-│       │   ├── scheduler/     # Verificação automática de preços
-│       │   ├── security/      # Login, senha e token JWT
-│       │   └── service/       # Regras de negócio
+│       │   ├── client/        # Connections to external services
+│       │   ├── config/        # System configuration
+│       │   ├── controller/    # API routes
+│       │   ├── dto/           # API input and output data
+│       │   ├── model/         # Database tables and core rules
+│       │   ├── repository/    # Database access
+│       │   ├── scheduler/     # Automatic price checks
+│       │   ├── security/      # Login, passwords, and JWTs
+│       │   └── service/       # Business rules
 │       └── resources/
 │           ├── application.properties
-│           └── db/migration/  # Criação e alteração das tabelas
+│           └── db/migration/  # Database table creation and changes
 ├── frontend/
-│   ├── app/                   # Páginas do site
-│   ├── components/            # Partes reutilizáveis da tela
-│   └── lib/                   # Comunicação com a API
+│   ├── app/                   # Website pages
+│   ├── components/            # Reusable UI components
+│   └── lib/                   # API communication
 ├── Dockerfile
 └── pom.xml
 ```
