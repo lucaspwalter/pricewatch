@@ -1,6 +1,8 @@
 # PriceWatch
 
-## What it is
+An automated product price tracker with target-price alerts.
+
+## Overview
 
 PriceWatch is a system that automatically tracks product prices.
 
@@ -8,7 +10,7 @@ It works like a "notify me when the price drops" service. Users add a product, c
 
 When the current price is less than or equal to the target price, the system disables the alert and displays the change on the dashboard.
 
-## How it works
+## Features
 
 The project has two parts:
 
@@ -17,7 +19,7 @@ The project has two parts:
 
 The backend checks prices every 30 minutes. It retrieves each product's current price, saves it to the history, and compares it with the user's target price.
 
-## Technologies
+## Tech Stack
 
 Backend:
 
@@ -26,18 +28,6 @@ Backend:
 - Spring Security
 - Spring Data JPA
 - PostgreSQL
-
-## Running locally
-
-With Docker installed:
-
-```bash
-git clone https://github.com/lucaspwalter/pricewatch.git
-cd pricewatch
-docker compose up --build
-```
-
-Open `http://localhost:3000`. API: `http://localhost:8080`.
 - Flyway
 - JWT
 - Maven
@@ -53,13 +43,25 @@ Integration:
 
 - Fake Store API for product and price data
 
-## How to use
+## Getting Started
+
+With Docker installed:
+
+```bash
+git clone https://github.com/lucaspwalter/pricewatch.git
+cd pricewatch
+docker compose up --build
+```
+
+Open `http://localhost:3000`. API: `http://localhost:8080`.
+
+## Usage
 
 Instructions for using PriceWatch are available in my portfolio:
 
 https://lucaspwalter.github.io/portfolio/setup-pricewatch.html
 
-## Project structure
+## Project Structure
 
 ```text
 pricewatch/
@@ -85,3 +87,7 @@ pricewatch/
 ├── Dockerfile
 └── pom.xml
 ```
+
+## License
+
+Licensed under the MIT License. See `LICENSE`.
