@@ -1,6 +1,6 @@
 package com.pricewatch.scheduler;
 
-import com.pricewatch.client.FakeStoreClient;
+import com.pricewatch.client.ProductPageClient;
 import com.pricewatch.model.Alert;
 import com.pricewatch.model.PriceHistory;
 import com.pricewatch.repository.AlertRepository;
@@ -21,18 +21,18 @@ public class PriceMonitorScheduler {
 
     private final AlertRepository alertRepository;
     private final PriceHistoryRepository priceHistoryRepository;
-    private final FakeStoreClient fakeStoreClient;
+    private final ProductPageClient productPageClient;
     private final NotificationService notificationService;
 
     public PriceMonitorScheduler(
             AlertRepository alertRepository,
             PriceHistoryRepository priceHistoryRepository,
-            FakeStoreClient fakeStoreClient,
+            ProductPageClient productPageClient,
             NotificationService notificationService
     ) {
         this.alertRepository = alertRepository;
         this.priceHistoryRepository = priceHistoryRepository;
-        this.fakeStoreClient = fakeStoreClient;
+        this.productPageClient = productPageClient;
         this.notificationService = notificationService;
     }
 
@@ -52,7 +52,7 @@ public class PriceMonitorScheduler {
 
     @Transactional
     protected void processAlert(Alert alert) {
-        BigDecimal currentPrice = fakeStoreClient.getCurrentPrice(alert.getProduct().getExternalId());
+        BigDecimal currentPrice = productPageClient.getProduct(alert.getProduct().getUrl()).price();
 
         PriceHistory history = new PriceHistory();
         history.setProduct(alert.getProduct());

@@ -7,7 +7,7 @@ public final class ProductDtos {
     private ProductDtos() {
     }
 
-    public record ProductRequest(Integer productId) {
+    public record ProductRequest(String url) {
     }
 
     public record ProductResponse(Long id, String externalId, String title, String url, OffsetDateTime createdAt) {

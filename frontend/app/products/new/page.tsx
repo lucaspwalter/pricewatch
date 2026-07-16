@@ -12,7 +12,7 @@ import { FormEvent, useState } from "react";
 
 export default function NewProductPage() {
   const router = useRouter();
-  const [productId, setProductId] = useState("");
+  const [url, setUrl] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -24,7 +24,7 @@ export default function NewProductPage() {
     try {
       const product = await apiFetch<Product>("/products", {
         method: "POST",
-        body: JSON.stringify({ productId: Number(productId) })
+        body: JSON.stringify({ url })
       });
       saveStoredProduct(product);
       router.push(`/alerts/new?productId=${product.id}`);
@@ -39,17 +39,15 @@ export default function NewProductPage() {
     <AppShell>
       <div className="max-w-xl">
         <h1 className="text-2xl font-semibold text-slate-950">Novo produto</h1>
-        <p className="mt-1 text-sm text-slate-500">Use um numero de 1 a 20 da Fake Store.</p>
+        <p className="mt-1 text-sm text-slate-500">Cole o link do produto em uma loja suportada.</p>
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-4 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
           {error && <StatusMessage type="error" message={error} />}
           <FormField
-            label="ID do produto"
-            type="number"
-            min="1"
-            step="1"
-            value={productId}
-            onChange={(event) => setProductId(event.target.value)}
+            label="URL do produto"
+            type="url"
+            value={url}
+            onChange={(event) => setUrl(event.target.value)}
             required
           />
           <SubmitButton loading={loading}>Cadastrar produto</SubmitButton>

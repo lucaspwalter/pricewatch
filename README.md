@@ -1,93 +1,95 @@
 # PriceWatch
 
-An automated product price tracker with target-price alerts.
+PriceWatch is a full-stack price monitoring platform that tracks real product pages, records price history, and notifies users when a target price is reached.
 
-## Overview
+<p align="center">
+  <img src="docs/assets/stores/amazon.png" alt="Amazon" width="120" height="120" />
+  <img src="docs/assets/stores/mercado-livre.png" alt="Mercado Livre" width="120" height="120" />
+  <img src="docs/assets/stores/kabum.png" alt="KaBuM" width="120" height="120" />
+  <img src="docs/assets/stores/aliexpress.png" alt="AliExpress" width="120" height="120" />
+</p>
 
-PriceWatch is a system that automatically tracks product prices.
+## Supported stores
 
-It works like a "notify me when the price drops" service. Users add a product, choose their target price, and the system checks whether the product has reached that price.
+| Store | Status | Integration |
+| --- | --- | --- |
+| Amazon Brazil | Supported | Product page extraction |
+| Mercado Livre | Supported | Official Mercado Livre API only |
+| KaBuM | Supported | Product page extraction |
+| AliExpress | Supported | Browser-rendered product page extraction |
 
-When the current price is less than or equal to the target price, the system disables the alert and displays the change on the dashboard.
+> Mercado Livre requires valid API credentials. HTML scraping is not used as a reliable fallback for blocked product pages.
 
 ## Features
 
-The project has two parts:
+- Real product page monitoring
+- Configurable target-price alerts
+- Automatic checks every 30 minutes
+- Historical price records
+- JWT authentication
+- WhatsApp notification integration
+- Domain allowlist and HTTPS URL validation
+- Docker-based local environment
 
-- Backend: the API that stores users, products, alerts, price history, and notifications.
-- Frontend: the browser interface used to create an account, sign in, and manage alerts.
+## Tech stack
 
-The backend checks prices every 30 minutes. It retrieves each product's current price, saves it to the history, and compares it with the user's target price.
+- Java 17, Spring Boot, Spring Security, Spring Data JPA
+- PostgreSQL and Flyway
+- Next.js, React, TypeScript, and Tailwind CSS
+- Selenium Chromium and Jsoup
+- Docker Compose
 
-## Tech Stack
+## Getting started
 
-Backend:
-
-- Java 17
-- Spring Boot
-- Spring Security
-- Spring Data JPA
-- PostgreSQL
-- Flyway
-- JWT
-- Maven
-
-Frontend:
-
-- Next.js
-- React
-- TypeScript
-- Tailwind CSS
-
-Integration:
-
-- Fake Store API for product and price data
-
-## Getting Started
-
-With Docker installed:
+Requirements: Docker and Docker Compose.
 
 ```bash
 git clone https://github.com/lucaspwalter/pricewatch.git
 cd pricewatch
+cp .env.example .env
 docker compose up --build
 ```
 
-Open `http://localhost:3000`. API: `http://localhost:8080`.
+Open the web app at `http://localhost:3000`. The API runs at `http://localhost:8080`.
 
-## Usage
+## Mercado Livre configuration
 
-Instructions for using PriceWatch are available in my portfolio:
+Create an application in the Mercado Livre developer portal and add its credentials to `.env`:
 
-https://lucaspwalter.github.io/portfolio/setup-pricewatch.html
+```env
+MERCADOLIVRE_ACCESS_TOKEN=
+MERCADOLIVRE_CLIENT_ID=
+MERCADOLIVRE_CLIENT_SECRET=
+```
 
-## Project Structure
+Never commit `.env`, access tokens, client secrets, or notification API keys.
+
+## Architecture
 
 ```text
 pricewatch/
-├── src/
-│   └── main/
-│       ├── java/com/pricewatch/
-│       │   ├── client/        # Connections to external services
-│       │   ├── config/        # System configuration
-│       │   ├── controller/    # API routes
-│       │   ├── dto/           # API input and output data
-│       │   ├── model/         # Database tables and core rules
-│       │   ├── repository/    # Database access
-│       │   ├── scheduler/     # Automatic price checks
-│       │   ├── security/      # Login, passwords, and JWTs
-│       │   └── service/       # Business rules
-│       └── resources/
-│           ├── application.properties
-│           └── db/migration/  # Database table creation and changes
-├── frontend/
-│   ├── app/                   # Website pages
-│   ├── components/            # Reusable UI components
-│   └── lib/                   # API communication
-├── Dockerfile
-└── pom.xml
+├── frontend/                  # Next.js web application
+├── src/main/java/             # Spring Boot application
+│   └── com/pricewatch/
+│       ├── client/            # Store and notification integrations
+│       ├── controller/        # REST endpoints
+│       ├── model/             # Domain entities
+│       ├── repository/        # Persistence layer
+│       ├── scheduler/         # Automated price checks
+│       ├── security/          # Authentication and authorization
+│       └── service/           # Business logic
+├── src/main/resources/        # Configuration and migrations
+├── docs/assets/stores/        # Store logos
+└── docker-compose.yml
 ```
+
+## Security
+
+- Secrets are loaded through environment variables.
+- `.env` is excluded from Git.
+- Only HTTPS URLs from approved store domains are accepted.
+- Credentials and tokens must be rotated immediately if exposed.
 
 ## License
 
-Licensed under the MIT License. See `LICENSE`.
+Licensed under the terms in [LICENSE](LICENSE).

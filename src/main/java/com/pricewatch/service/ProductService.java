@@ -1,7 +1,6 @@
 package com.pricewatch.service;
 
-import com.pricewatch.client.FakeStoreClient;
-import com.pricewatch.dto.ExternalDtos.FakeStoreProductResponse;
+import com.pricewatch.client.ProductPageClient;
 import com.pricewatch.dto.PriceHistoryResponse;
 import com.pricewatch.dto.ProductDtos.ProductRequest;
 import com.pricewatch.dto.ProductDtos.ProductResponse;
@@ -9,6 +8,9 @@ import com.pricewatch.model.Product;
 import com.pricewatch.repository.PriceHistoryRepository;
 import com.pricewatch.repository.ProductRepository;
 import java.util.List;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,28 +21,33 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final PriceHistoryRepository priceHistoryRepository;
-    private final FakeStoreClient fakeStoreClient;
+    private final ProductPageClient productPageClient;
 
     public ProductService(
             ProductRepository productRepository,
             PriceHistoryRepository priceHistoryRepository,
-            FakeStoreClient fakeStoreClient
+            ProductPageClient productPageClient
     ) {
         this.productRepository = productRepository;
         this.priceHistoryRepository = priceHistoryRepository;
-        this.fakeStoreClient = fakeStoreClient;
+        this.productPageClient = productPageClient;
     }
 
     @Transactional
     public ProductResponse create(ProductRequest request) {
-        if (request.productId() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Informe um productId valido");
+        if (request.url() == null || request.url().isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Informe a URL do produto");
         }
 
-        String externalId = String.valueOf(request.productId());
-        return productRepository.findByExternalId(externalId)
-                .map(ProductResponse::from)
-                .orElseGet(() -> ProductResponse.from(productRepository.save(buildProduct(externalId))));
+        try {
+            ProductPageClient.ProductData data = productPageClient.getProduct(request.url());
+            String externalId = hash(data.url());
+            return productRepository.findByExternalId(externalId)
+                    .map(ProductResponse::from)
+                    .orElseGet(() -> ProductResponse.from(productRepository.save(buildProduct(externalId, data))));
+        } catch (IllegalArgumentException | IllegalStateException exception) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage());
+        }
     }
 
     public ProductResponse get(Long id) {
@@ -60,16 +67,21 @@ public class ProductService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Produto nao encontrado"));
     }
 
-    private Product buildProduct(String externalId) {
-        FakeStoreProductResponse fakeStoreProduct = fakeStoreClient.getProduct(externalId);
-        if (fakeStoreProduct == null || fakeStoreProduct.id() == null || fakeStoreProduct.title() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Informe um productId valido");
-        }
-
+    private Product buildProduct(String externalId, ProductPageClient.ProductData data) {
         Product product = new Product();
         product.setExternalId(externalId);
-        product.setTitle(fakeStoreProduct.title());
-        product.setUrl("https://fakestoreapi.com/products/" + externalId);
+        product.setTitle(data.title());
+        product.setUrl(data.url());
         return product;
+    }
+
+    private String hash(String value) {
+        try {
+            byte[] digest = MessageDigest.getInstance("SHA-256")
+                    .digest(value.getBytes(StandardCharsets.UTF_8));
+            return java.util.HexFormat.of().formatHex(digest);
+        } catch (NoSuchAlgorithmException exception) {
+            throw new IllegalStateException("SHA-256 indisponivel", exception);
+        }
     }
 }

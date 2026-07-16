@@ -21,11 +21,29 @@ services:
       DATABASE_PASSWORD: pricewatch
       JWT_SECRET: pricewatch-local-secret-key-32-characters-minimum
       JWT_EXPIRATION_MS: 86400000
+      MERCADOLIVRE_ACCESS_TOKEN: ${MERCADOLIVRE_ACCESS_TOKEN:-}
+      MERCADOLIVRE_CLIENT_ID: ${MERCADOLIVRE_CLIENT_ID:-}
+      MERCADOLIVRE_CLIENT_SECRET: ${MERCADOLIVRE_CLIENT_SECRET:-}
+      BROWSER_URL: http://browser:4444/wd/hub
     ports:
       - "8080:8080"
     depends_on:
       db:
         condition: service_healthy
+      browser:
+        condition: service_healthy
+
+  browser:
+    image: selenium/standalone-chromium:4.27.0
+    shm_size: 2gb
+    environment:
+      SE_NODE_MAX_SESSIONS: 2
+      SE_NODE_OVERRIDE_MAX_SESSIONS: "true"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4444/wd/hub/status"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
 
   frontend:
     build: ./frontend
